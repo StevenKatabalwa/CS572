@@ -38,4 +38,4 @@ String.prototype.filterWords = function (more) {
 
 sentence.filterWords(bannedWords)
 
-//Using 
+//Using Observables
