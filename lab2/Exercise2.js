@@ -1,6 +1,5 @@
 
 Array.prototype.even = function () {
-
     const func = (async () => {
         return this.filter(x => (x % 2) == 0)
     })().then(console.log)
