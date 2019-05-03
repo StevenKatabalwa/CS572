@@ -3,15 +3,12 @@ const http = require('http')
 const url = require('url')
 const env = require('dotenv')
 
-env.config({ path: '../lab4/.env' })
+env.config({path:'../.env'})
 
 const portNumber = process.env.PORT
 const hostName = process.env.HOSTNAME
 
-
 process.on('message', () => {
-
-    let file = undefined
 
     http.createServer((req, res) => {
 
@@ -19,7 +16,7 @@ process.on('message', () => {
 
         var [tag, file] = query.split("=")
 
-        file = file || 'text.txt'
+        file = file || 'file.txt'
 
         fileExists(file, (result) => {
 
@@ -28,9 +25,8 @@ process.on('message', () => {
             }
             else {
                 console.log('File Not Exist')
-                fs.writeFileSync(file, "This is the new file i have created", () => {
-                    console.log(`File ${file} has been created`)
-                })
+                
+                fs.writeFileSync(file, "This is the new file i have created")
             }
 
             file = fs.readFile(file, (err, data) => {
@@ -40,10 +36,6 @@ process.on('message', () => {
 
                 process.send(`Job has been completed by Processer: ${process.pid}`)
 
-            })
-
-            res.on('close', () => {
-            
             })
         })
 

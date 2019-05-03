@@ -3,7 +3,7 @@ const { fork } = childProcess
 
 const child = fork('./child.js')
 
-//child.send('start')
+child.send('start')
 
 child.on('message', (msg) => {
     console.log(msg)
