@@ -1,6 +1,7 @@
 const express = require('express')
 const env = require('dotenv')
 const axios = require('axios')
+const url=require('url')
 
 env.config({ path: './.env' })
 
@@ -21,10 +22,14 @@ app.get('/', (req, res) => {
         console.log(data)
 
         const headers={
-            
+            'Content-Type':'application/json',
+            'Cache-Control':'private, max-age=86400',
+            'Last-Modified':'Fri, 03 May 2019 21:27:26 GMT',
+            'Link':url.parse(req.url).href+' rel=next',
+             etag:data.headers.etag
         }
 
-        res.set({'Content-Type':'application/json','Cache-Control':'private, max-age=86400','Last-Modified':'Fri, 03 May 2019 21:27:26 GMT'})
+        res.set(headers)
     
         const jsonData=JSON.stringify(data.data.results)
 
