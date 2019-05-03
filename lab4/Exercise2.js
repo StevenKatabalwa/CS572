@@ -4,6 +4,9 @@ const url = require('url')
 const http = require('http')
 const fs = require('fs')
 const util = require('util')
+const process=require('child_process')
+
+const {fork}=process
 
 //using cluster and load balancer
 if (cluster.isMaster) {
@@ -22,7 +25,7 @@ else {
 
         const [a, b] = u.path.split("=")
 
-        const exists = fileExists(`./${b}`)
+        const exists = fileExists(b)
 
         exists.then(() => {
 
@@ -41,7 +44,7 @@ else {
 
         }, () => {
             console.log('File did not exist, just created one')
-            fs.writeFile(`./${b}`, "This is the data written to the file", () => { })
+            fs.writeFile(`./${b}`, "This is the data written to the new file", () => { })
         })
 
 
@@ -55,14 +58,12 @@ const fileExists = (file) => {
 
     let result = false
 
-    return new Promise((res,rej)=>{
+    return new Promise((res, rej) => {
 
-     fs.existsSync(file, (rss) => {
-        result = rss
+        result=fs.existsSync(file)
+
+        if (result) { res(result) }
+
+        else { rej(result) }
     })
-    
-    if(result) res(result)
-
-    else rej(result)
-})
 }

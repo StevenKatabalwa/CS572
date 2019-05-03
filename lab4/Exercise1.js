@@ -5,7 +5,7 @@ function checkSystem() {
 
     console.log('Checking your system...')
 
-    let memoryMsg = os.totalmem() >= 4 || "This app needs at least 4 GB of RAM"
+    let memoryMsg = os.totalmem()/1000000000 >= 4 || "This app needs at least 4 GB of RAM"
     memoryMsg = `Memory: ${memoryMsg}`
 
     let processorMsg = os.cpus().length >= 2 || "Processor is not Supported"
