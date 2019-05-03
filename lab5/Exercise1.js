@@ -1,7 +1,7 @@
 const express = require('express')
 const env = require('dotenv')
 const axios = require('axios')
-const url=require('url')
+const url = require('url')
 
 env.config({ path: './.env' })
 
@@ -9,38 +9,48 @@ const app = express()
 const portNumber = process.env.PORT
 const hostName = process.env.HOSTNAME
 
-app.set('x-powered-by',false)
-app.set('strict routing',true)
-app.set('case sensitive routing',true)
-//app.set('etag','weak')
+app.set('x-powered-by', false)
+app.set('strict routing', true)
+app.set('case sensitive routing', true)
 
-app.get('/', (req, res) => {
+app.get('/:pg', (req, res) => {
 
     fetchData('https://randomuser.me/api/?results=10')
-    .then((data)=>{
+        .then((data) => {
 
-        console.log(data)
+            const jsonData = JSON.stringify(data.data.results)
 
-        const headers={
-            'Content-Type':'application/json',
-            'Cache-Control':'private, max-age=86400',
-            'Last-Modified':'Fri, 03 May 2019 21:27:26 GMT',
-            'Link':url.parse(req.url).href+' rel=next',
-             etag:data.headers.etag
-        }
+            console.log(jsonData)
 
-        res.set(headers)
-    
-        const jsonData=JSON.stringify(data.data.results)
+            const id = req.path.split("/")[1]
 
-        console.log(jsonData)
+            const { host } = req.headers
 
-        res.write(jsonData)
+            let nextlink=''
 
-        res.end()
-    })
+            if (id < data.data.results.length) {
+                nextlink = `${req.protocol}://${host}/${parseInt(id) + 1} rel='next'`
+            }
+            const lastlink = `${req.protocol}://${host}/${data.data.results.length} rel='last'`
 
-}).listen(portNumber,hostName).on('listening', () => {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'private, max-age=86400',
+                'Last-Modified': 'Fri, 03 May 2019 21:27:26 GMT',
+                'Link': `${nextlink}, ${lastlink}`,
+                etag: data.headers.etag
+            }
+
+            res.set(headers)
+
+            const requestedData = JSON.parse(jsonData)
+
+            res.write(JSON.stringify(requestedData[id-1]))
+
+            res.end()
+        })
+
+}).listen(portNumber, hostName).on('listening', () => {
 
     console.log(`Server is listening at: ${hostName}:${portNumber}`)
 
@@ -55,7 +65,4 @@ const fetchData = async (url) => {
 }
 
 /**Test**/
-
-
-
 //path: https://randomuser.me/api/?results=10
