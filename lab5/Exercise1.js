@@ -34,19 +34,19 @@ app.get('/:pg', (req, res) => {
             const lastlink = `${req.protocol}://${host}/${data.data.results.length} rel='last'`
 
             const headers = {
-                'Content-Type': 'application/json',
+                //'Content-Type': 'application/json',
                 'Cache-Control': 'private, max-age=86400',
                 'Last-Modified': 'Fri, 03 May 2019 21:27:26 GMT',
                 'Link': `${nextlink}, ${lastlink}`,
-                etag: data.headers.etag
+               // etag: data.headers.etag
             }
 
             res.set(headers)
 
             const requestedData = JSON.parse(jsonData)
 
-            res.write(JSON.stringify(requestedData[id-1]))
-
+            res.json(requestedData[id-1])
+            
             res.end()
         })
 
