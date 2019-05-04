@@ -7,16 +7,15 @@ const item = {
 
 const applyCoupon = (p) => {
 
-    let {price}= p
-
     return (discount) => {
 
-        price = price - (price * discount) / 100;
-
-        p.price=price
-        
-        return p
+        return getDiscountedPrice.call(p,discount)
     }
+}
+
+const getDiscountedPrice=function(discount){
+    this.price=this.price - (this.price * discount) / 100;
+    return this
 }
 
 console.log(applyCoupon(item)(10).price)
