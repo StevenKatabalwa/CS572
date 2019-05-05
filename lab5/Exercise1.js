@@ -19,9 +19,7 @@ app.get('/:pg', (req, res) => {
         .then((data) => {
 
             const jsonData = JSON.stringify(data.data.results)
-
-            console.log(jsonData)
-
+            
             const id = req.path.split("/")[1]
 
             const { host } = req.headers

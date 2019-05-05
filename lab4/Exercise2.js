@@ -3,10 +3,8 @@ const os = require('os')
 const url = require('url')
 const http = require('http')
 const fs = require('fs')
-const util = require('util')
-const process=require('child_process')
 
-const {fork}=process
+const { fork } = process
 
 //using cluster and load balancer
 if (cluster.isMaster) {
@@ -21,20 +19,21 @@ else {
 
     http.createServer((req, res) => {
 
-        const u = url.parse(req.url)
+        const u = url.parse(req.url, true)
 
-        const [a, b] = u.path.split("=")
+        const { path } = u.query
 
-        const exists = fileExists(b)
+        const exists = fileExists(path)
 
         exists.then(() => {
 
-            const file = fs.createReadStream(`./${b}`)
+            const file = fs.createReadStream(`./${path}`)
 
             file.on('data', (data) => {
 
                 console.log(data)
                 res.write(data)
+            
 
             }).on('end', () => {
 
@@ -42,9 +41,12 @@ else {
 
             })
 
-        }, () => {
+        }, (err) => {
+
             console.log('File did not exist, just created one')
-            fs.writeFile(`./${b}`, "This is the data written to the new file", () => { })
+            fs.writeFile(path,'This is the data written to the file',(err)=>{console.log})
+            res.write('File did not exist, just created one')
+            res.end()
         })
 
 
@@ -56,12 +58,12 @@ else {
 
 const fileExists = (file) => {
 
-    let result = false
+    let result
 
     return new Promise((res, rej) => {
 
-        result=fs.existsSync(file)
-
+        result = fs.existsSync(file)
+   
         if (result) { res(result) }
 
         else { rej(result) }
