@@ -5,7 +5,6 @@ const env = require('dotenv')
 const rxjs = require('rxjs')
 const operators = require('rxjs/operators')
 
-
 env.config({ path: './.env' })
 const dataPath = process.env.DATAPATH
 
@@ -113,8 +112,7 @@ router.get('/', (req, res, next) => {
             res.end()
         })
 
-})
-    .put('/', jsonParser, (req, res, next) => {
+}).put('/', jsonParser, (req, res, next) => {
 
         const requestQuery = url.parse(req.url, true)
 
@@ -195,8 +193,7 @@ router.get('/', (req, res, next) => {
                     res.end()
         
                 })
-        
-
+                
         }
 
     })
