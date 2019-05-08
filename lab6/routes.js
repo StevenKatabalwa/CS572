@@ -4,6 +4,7 @@ const fs = require('fs')
 const env = require('dotenv')
 const rxjs = require('rxjs')
 const operators = require('rxjs/operators')
+const util = require('util')
 
 env.config({ path: './.env' })
 const dataPath = process.env.DATAPATH
@@ -35,73 +36,73 @@ router.get('/', (req, res, next) => {
 
                 res.writeHead(200, responseHeaders)
 
-                console.log('Data:'+data)
+                console.log('Data:' + data)
 
                 res.write(data)
 
                 res.end()
 
-            }).catch((err)=>{
+            }).catch((err) => {
 
                 res.write('Users do not exist')
-    
+
                 res.end()
-    
+
             })
     }
 
-},(req, res, next) => {
+}, (req, res, next) => {
 
-        const requestUrl = url.parse(req.url, true)
-        const { id } = requestUrl.query
+    const requestUrl = url.parse(req.url, true)
+    const { id } = requestUrl.query
 
-        readData(dataPath).then(data => {
+    readData(dataPath).then(data => {
 
-            const jsonData = JSON.parse(data)
+        const jsonData = JSON.parse(data)
 
-            from(jsonData).pipe(
+        from(jsonData).pipe(
 
-                filter(usr => usr.id == id)
+            filter(usr => usr.id == id)
 
-            ).subscribe(result => {
+        ).subscribe(result => {
 
-                res.json(result)
-
-                res.end()
-
-            })
-
-        }).catch((err)=>{
-
-            res.write('User does not exist')
+            res.json(result)
 
             res.end()
 
         })
 
-    }
+    }).catch((err) => {
+
+        res.write('User does not exist')
+
+        res.end()
+
+    })
+
+}
 
 ).post('/', jsonParser, (req, res) => {
 
     const data = req.body
 
-            readData(dataPath)
-                .then(result => {
+    readData(dataPath)
+        .then(result => {
 
-                    result = JSON.parse(result)
+            result = JSON.parse(result)
 
-                    result.push(data)
+            result.push(data)
 
-                    return JSON.stringify(result)
+            return JSON.stringify(result)
 
-                }).then(result => {
+        }).then(result => {
 
-                    writeData(dataPath, result)
+            writeData(dataPath, result)
 
-                    res.write('Data has been added to file')
+            res.write('Data has been added to file')
 
-                    res.end()
-                })
+            res.end()
+        })
 
         .catch((err) => {
 
@@ -114,97 +115,95 @@ router.get('/', (req, res, next) => {
 
 }).put('/', jsonParser, (req, res, next) => {
 
-        const requestQuery = url.parse(req.url, true)
+    const requestQuery = url.parse(req.url, true)
 
-        const { id } = requestQuery.query
+    const { id } = requestQuery.query
 
-        if (!id) return next('There is an error with your query string')
+    if (!id) return next('There is an error with your query string')
 
-        else {
+    else {
 
-            readData(dataPath)
-                .then(data => {
+        readData(dataPath)
+            .then(data => {
 
-                    const jsonData = JSON.parse(data)
+                const jsonData = JSON.parse(data)
 
-                    from(jsonData)
-                        .pipe(
+                from(jsonData)
+                    .pipe(
 
-                            map(usr => {
-                                if (usr.id == id) {
-                                    const newUsr = req.body
-                                    usr.name = newUsr.name
-                                    usr.age = newUsr.age
-                                }
-                                return usr
-                            }),
-                            toArray()
+                        map(usr => {
+                            if (usr.id == id) {
+                                const newUsr = req.body
+                                usr.name = newUsr.name
+                                usr.age = newUsr.age
+                            }
+                            return usr
+                        }),
+                        toArray()
 
-                        ).subscribe(results => {
+                    ).subscribe(results => {
 
-                            writeData(dataPath, JSON.stringify(results))
+                        writeData(dataPath, JSON.stringify(results))
 
-                            res.write("Data has been Updated")
+                        res.write("Data has been Updated")
 
-                            res.end()
+                        res.end()
 
-                        })
-                }).catch((err)=>{
+                    })
+            }).catch((err) => {
 
-                    res.write('User does not exist')
-        
-                    res.end()
-        
-                })
-        
-        }
+                res.write('User does not exist')
 
-    }).delete('/', (req, res, next) => {
+                res.end()
 
-        const requestQuery = url.parse(req.url, true)
+            })
 
-        const { id } = requestQuery.query
+    }
 
-        if (!id) return next('There is an error with your query string')
+}).delete('/', (req, res, next) => {
 
-        else {
+    const requestQuery = url.parse(req.url, true)
 
-            readData(dataPath)
-                .then(data => {
+    const { id } = requestQuery.query
 
-                    from(JSON.parse(data))
-                        .pipe(
+    if (!id) return next('There is an error with your query string')
 
-                            filter(usr => usr.id != id),
-                            toArray()
+    else {
 
-                        ).subscribe(results => {
+        readData(dataPath)
+            .then(data => {
 
-                            writeData(dataPath, JSON.stringify(results))
+                from(JSON.parse(data))
+                    .pipe(
 
-                            res.send('User has been deleted')
+                        filter(usr => usr.id != id),
+                        toArray()
 
-                        })
+                    ).subscribe(results => {
 
-                }).catch((err)=>{
+                        writeData(dataPath, JSON.stringify(results))
 
-                    res.write('User does not exist')
-        
-                    res.end()
-        
-                })
-                
-        }
+                        res.send('User has been deleted')
 
-    })
+                    })
+
+            }).catch((err) => {
+
+                res.write('User does not exist')
+
+                res.end()
+
+            })
+
+    }
+
+})
 
 const readData = (path) => {
 
-    return new Promise((res, rej) => {
+    const readFile = util.promisify(fs.readFile)
 
-        res(fs.readFileSync(path))
-
-    })
+    return readFile(path)
 
 }
 
@@ -214,7 +213,6 @@ const writeData = (path, data) => {
 
         console.log('Data has been written to file')
     })
-
 }
 
 module.exports = router

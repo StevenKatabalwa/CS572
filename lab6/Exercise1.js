@@ -15,7 +15,7 @@ const dataPath = process.env.DATAPATH
 app.use(logger('common'))
 app.use(cors())
 
-app.use('/users', (res, req, next) => {
+app.use('/users',(res, req, next) => {
 
     fileExists(dataPath)
         .then(console.log('Data Connection: Successful'))
@@ -33,7 +33,6 @@ app.listen(portNumber, hostName).on('listening', () => {
 
     console.log(`Server is listening at ${hostName}:${portNumber}`)
 })
-
 
 const fileExists = async (path) => {
 
