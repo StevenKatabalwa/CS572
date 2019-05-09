@@ -15,9 +15,6 @@ const router = express.Router()
 app.use('/', client)
 
 router.get('/', (req, res, next) => {
-
-      
-
 })
 
 app.listen(port, hostName)
