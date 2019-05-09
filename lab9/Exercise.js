@@ -72,7 +72,6 @@ router.post('/zip', jsonParser, (req, res, next) => {
             { $group: { _id: { state: '$state', city: '$city' }, pop: { $sum: '$pop' } } },
             { $sort: { '_id.state': 1, pop: 1 } },
             { $group: { _id: '$_id.state', city: { $first: '$_id.city' }, pop: { $first: '$pop' } } },
-            //{ $project: { 'state':'$_id.state', '_id.city': 1, pop: 1, } }
             { $project: { 'state':'$_id', city: 1, pop: 1, _id:0 } }           
         ]).toArray().then(docs => res.json(docs))
 
