@@ -10,6 +10,11 @@ client.connect().then(() => {
     console.log('Connected')
     const db = client.db('homework01')
     const collection = db.collection('data')
-    collection.findOne({},{message:1}).then(console.log)
-    
+    collection.findOne({}, { projection: { key: 1, message: 1, _id: 0 } })
+        .then(doc => {
+            const x = { message: encryptor(doc.key).decrypt(doc.message) }
+            return x
+        }).then(console.log)
+
+
 })
