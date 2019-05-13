@@ -67,13 +67,15 @@ router.post('/zip', jsonParser, (req, res, next) => {
     res.send('Successful')
 
 }).get('/', (req, res, next) => {
-    collection
+
+        collection
         .aggregate([
             { $group: { _id: { state: '$state', city: '$city' }, pop: { $sum: '$pop' } } },
-            { $sort: { '_id.state': 1, pop: 1 } },
+            { $sort: { pop: 1 } },
             { $group: { _id: '$_id.state', city: { $first: '$_id.city' }, pop: { $first: '$pop' } } },
             { $project: { 'state':'$_id', city: 1, pop: 1, _id:0 } }           
         ]).toArray().then(docs => res.json(docs))
+
 
 }).post('/search', (req, res, next) => {
 
