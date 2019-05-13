@@ -1,7 +1,9 @@
 const fs = require('fs')
 const http = require('http')
+const streamSeekable=require('fs-readstream-seek')
 
 const filePath = './Resources/comedy.mp4'
+
 
 //using fileSync
 http.createServer((req, res) => {
@@ -13,7 +15,7 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'video/mp4' })
 
     res.write(fileSyncData)
-    res.end()
+
 
 }).listen(8081, 'localhost').on('listening', () => {
 

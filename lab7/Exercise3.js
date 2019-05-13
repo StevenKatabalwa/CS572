@@ -19,6 +19,7 @@ const jsonParser = express.json()
 
 const uri = `mongodb+srv://${userName.toLowerCase()}:${encodeURIComponent(password)}@cluster0-ryudk.azure.mongodb.net?retryWrites=true`
 
+
 const mongoClient = new MongoClient(uri, { useNewUrlParser: true })
 
 let db = null
@@ -66,7 +67,9 @@ router.post('/lecture', jsonParser, (req, res, next) => {
 
 }).get('/', (req, res, next) => {
     
-    collection.find().toArray().then(docs => res.json(docs))
+    
+    collection.aggregate([{$group:{_id:'$_id',lm:{$max:'$lecture'}}}]).sort({_id:-1}).toArray().then(docs => res.json(docs))
+
 
 }).post('/search',(req,res,next)=>{
 

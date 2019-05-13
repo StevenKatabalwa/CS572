@@ -20,7 +20,7 @@ resolve4('www.mum.edu').then(console.log)
 const resolver=new Resolver()
 
 const resolve4Async = async function (hostname) {
-
+    
     return await resolver.resolve4(hostname)
 }
 
