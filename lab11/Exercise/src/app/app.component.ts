@@ -8,10 +8,8 @@ import { EventEmitter } from 'events';
 })
 export class AppComponent {
   title = 'Lab 11';
-
-  value
-
-  changeCounter(e,x) {
-    console.log(e.data)
+  
+  changeCounter(x) {
+    
   }
 }

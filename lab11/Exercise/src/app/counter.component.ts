@@ -1,6 +1,4 @@
 import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core'
-import { template } from '@angular/core/src/render3';
-import { increaseElementDepthCount } from '@angular/core/src/render3/state';
 
 @Component({
     selector: 'counter',
@@ -8,13 +6,15 @@ import { increaseElementDepthCount } from '@angular/core/src/render3/state';
         '<input type="button" (click)="decrease()" value="-"/>' +
         '<span> {{counterValue}} </span>' +
         '<input type="button"(click)="increase()" value="+"/>' +
-        '<p>{{componentCounterValue}}</p>'
+        '<p>Component Counter Value: {{componentCounterValue}}</p>'
 })
 export class CounterComponent implements OnInit {
 
     @Input() counter
+    @Output() counterChange = new EventEmitter
+    @ViewChild('inp') inp
+
     componentCounterValue
-   
     counterValue = 0
 
     ngOnInit() {
@@ -22,13 +22,13 @@ export class CounterComponent implements OnInit {
         this.counterValue = this.counter || this.counterValue
     }
 
-    @ViewChild('inp') inp
-
-    @Output() counterChange = new EventEmitter
-
     change() {
 
-        this.counterChange.emit({event:this,data:`${this.inp.nativeElement.value}`})
+        const caller = this.inp.nativeElement        
+        
+        this.counterChange.emit(`${caller.value}`)
+        this.componentCounterValue = caller.value
+        this.counterValue=caller.value||0
     }
 
     increase() {
