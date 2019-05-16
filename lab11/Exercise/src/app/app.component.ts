@@ -8,8 +8,11 @@ import { EventEmitter } from 'events';
 })
 export class AppComponent {
   title = 'Lab 11';
-  
+
+  name="Steven"
+
   changeCounter(x) {
     
+    this.name="Hello"
   }
 }

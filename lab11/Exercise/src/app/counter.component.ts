@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core'
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit, ChangeDetectionStrategy } from '@angular/core'
 
 @Component({
     selector: 'counter',
@@ -11,6 +11,7 @@ import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angu
 export class CounterComponent implements OnInit {
 
     @Input() counter
+    @Input() name
     @Output() counterChange = new EventEmitter
     @ViewChild('inp') inp
 
